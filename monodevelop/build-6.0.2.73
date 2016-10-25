@@ -1,0 +1,22 @@
+#!/bin/bash
+
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+cat << EOF > /etc/apt/sources.list.d/mono-xamarin.list
+deb http://download.mono-project.com/repo/debian wheezy main
+deb-src http://download.mono-project.com/repo/debian wheezy main
+deb http://download.mono-project.com/repo/debian wheezy-apache24-compat main
+deb http://download.mono-project.com/repo/debian wheezy-libjpeg62-compat main
+EOF
+
+apt-get update || exit 1
+apt-get install -y gtk-sharp2 mono-devel libmono-addins0.2-cil monodoc-base cmake libssh2-1-dev automake fsharp intltool gnome-sharp2 git referenceassemblies-pcl || exit 1
+apt-get upgrade -y || exit 1
+
+VERSION="monodevelop-6.0.2.73"
+echo "Cloning: ${VERSION}"
+git clone https://github.com/mono/monodevelop.git --branch "${VERSION}" md || exit 1
+
+cd md
+./configure --prefix=/opt/monodevelop || exit 1
+make || exit 1
+make DESTDIR=${1} install || exit 1
