@@ -17,6 +17,6 @@ echo "Cloning: ${VERSION}"
 git clone https://github.com/mono/monodevelop.git --branch "${VERSION}" md || exit 1
 
 cd md
-./configure --prefix=/opt/monodevelop || exit 1
+./configure --prefix=/usr/local || exit 1
 make || exit 1
 make DESTDIR=${1} install || exit 1
