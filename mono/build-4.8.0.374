@@ -1,0 +1,22 @@
+#!/bin/bash
+
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+cat << EOF > /etc/apt/sources.list.d/mono-xamarin.list
+deb http://download.mono-project.com/repo/debian wheezy main
+deb-src http://download.mono-project.com/repo/debian wheezy main
+deb http://download.mono-project.com/repo/debian wheezy-apache24-compat main
+deb http://download.mono-project.com/repo/debian wheezy-libjpeg62-compat main
+EOF
+
+apt-get update || exit 1
+apt-get install -y python cmake git autoconf libtool automake build-essential mono-devel gettext
+apt-get upgrade -y || exit 1
+
+VERSION="mono-4.8.0.374"
+echo "Cloning: ${VERSION}"
+git clone https://github.com/mono/mono.git --branch "${VERSION}" mono || exit 1
+
+cd mono
+./autogen.sh --prefix=/usr/local || exit 1
+make || exit 1
+make DESTDIR=${1} install || exit 1
